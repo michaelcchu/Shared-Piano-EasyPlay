@@ -47,7 +47,7 @@ fileInput.addEventListener("change", () => {
 });
 
 // Declare variables
-let activePress; let index; let notes; let normalGain; 
+let activePress; let frequencies; let index; let notes; let normalGain; 
 let octave; let press; let track; let tuning;
 const value = {"c":0,"d":2,"e":4,"f":5,"g":7,"a":9,"b":11,"#":1,"&":-1};
 let on = false;
@@ -60,8 +60,34 @@ function start() {
 
 function resetVars() {
     activePress = null; frequencies = []; index = 0; 
+    tuning = {pitch: 9, octave: 4, frequency: 440};
     track = 0;
-    notes = midi.tracks[track].notes.map(x => x.midi);
+    octave = 4;
+    notes = midi.tracks[track].notes.map(x => format(x.name));
+    normalGain = 0.15;
+    gainNode.gain.value = 0;
+}
+
+function format(x) {return x.trim().toLowerCase();}
+
+function unbundle(note) {
+    let text = format(note); note = text.split('');
+    if (+note.at(-1)) {octave = +note.pop();} else {text += octave;}
+    let pitch = 0; while (note.length) { pitch += value[note.pop()]; }
+    return {pitch:pitch, octave:octave, text:text};
+}
+
+function toFreq(note) {
+    return tuning.frequency * 2**((note.pitch - tuning.pitch)/12 
+        + note.octave - tuning.octave);
+}
+
+function convertNotesToFrequencies() {
+    octave = 4;
+    for (let i = 0; i < notes.length; i++) {
+        const note = unbundle(notes[i]); notes[i] = note.text;
+        frequencies.push(toFreq(note));
+    } 
 }
 
 // Listen for user input
@@ -72,6 +98,11 @@ document.addEventListener("keydown", (e) => {
 
 const badKeys = ["Alt","Arrow","Audio","Enter","Launch","Meta","Play","Tab"];
 
+const audioContext = new AudioContext();
+const gainNode = new GainNode(audioContext);
+const oscillator = new OscillatorNode(audioContext, {frequency: 0});
+oscillator.connect(gainNode).connect(audioContext.destination);
+
 function key(e) { 
     if (e.type.includes("key")) {press = e.key;} 
     else {press = e.changedTouches[0].identifier;}
@@ -81,12 +112,15 @@ function key(e) {
 function down(e) {
     const strPress = "" + press;
     if (on && !badKeys.some(badKey => strPress.includes(badKey))
-        && (index < notes.length) && !e.repeat && (press != activePress)
+        && (index < frequencies.length) && !e.repeat && (press != activePress)
         && (document.activeElement.nodeName !== 'INPUT')) {
         if (activePress === null) {
-            DOM_note[notes[i]].click();
+            oscillator.frequency.value = frequencies[index];
+            gainNode.gain.setTargetAtTime(normalGain, 
+                audioContext.currentTime, 0.015);
         } else {
-            DOM_note[notes[i]].click();
+            oscillator.frequency.setTargetAtTime(frequencies[index], 
+                audioContext.currentTime, 0.003)    
         }
         activePress = press; index++;
     }

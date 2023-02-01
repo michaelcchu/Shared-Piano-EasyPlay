@@ -1,0 +1,186 @@
+// ==UserScript==
+// @name         Shared Piano EasyPlay
+// @namespace    https://mcchu.com/
+// @version      0.1
+// @description  Play a track from a MIDI file on Shared Piano by pressing keys to play the next note.
+// @author       Michael Chu
+// @match        https://musiclab.chromeexperiments.com/Shared-Piano/
+// @icon         https://www.google.com/s2/favicons?domain=chromeexperiments.com
+// @grant        none
+// @require      https://unpkg.com/@tonejs/midi
+// ==/UserScript==
+
+
+const fileInput = document.createElement('input');
+fileInput.type = "file";
+fileInput.accept = ".mid,.midi";
+document.body.appendChild(fileInput);
+
+const reader = new FileReader();
+
+let midi;
+
+reader.onload = function(e) {
+    midi = new Midi(e.target.result);
+    console.log(midi);
+}
+
+fileInput.addEventListener("change", () => {
+    //resetVariables();
+    console.log("yay");
+    const file = fileInput.files[0]; // change to input
+    if (file) {reader.readAsArrayBuffer(file);}
+});
+
+function start() { }
+
+document.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") { on = true; start(); }
+    if (e.key === 'm' && e.ctrlKey) { console.log("click"); fileInput.click(); }
+});
+
+console.log("hi");
+
+// https://musiclab.chromeexperiments.com/Shared-Piano
+// dev tool에서 돌리면 width 따라 undefine 인식될 수 있으니 주의
+// p# = piano octave # (ex. p3 == piano octave 3)
+let p = document.querySelector('#piano > piano-keyboard').shadowRoot.querySelectorAll("#container > piano-keyboard-octave");
+let p1 = p[0].shadowRoot;
+let p2 = p[1].shadowRoot;
+let p3 = p[2].shadowRoot;
+let p4 = p[3].shadowRoot;
+let p5 = p[4].shadowRoot;
+let p6 = p[5].shadowRoot;
+let p7 = p[6].shadowRoot;
+// console.log(t0);
+
+let w1 = p1.querySelectorAll("#container > #white-notes > piano-keyboard-note");
+let w2 = p2.querySelectorAll("#container > #white-notes > piano-keyboard-note");
+let w3 = p3.querySelectorAll("#container > #white-notes > piano-keyboard-note");
+let w4 = p4.querySelectorAll("#container > #white-notes > piano-keyboard-note");
+let w5 = p5.querySelectorAll("#container > #white-notes > piano-keyboard-note");
+let w6 = p6.querySelectorAll("#container > #white-notes > piano-keyboard-note");
+let w7 = p7.querySelectorAll("#container > #white-notes > piano-keyboard-note");
+
+let b1 = p1.querySelectorAll("#container > #black-notes > piano-keyboard-note");
+let b2 = p2.querySelectorAll("#container > #black-notes > piano-keyboard-note");
+let b3 = p3.querySelectorAll("#container > #black-notes > piano-keyboard-note");
+let b4 = p4.querySelectorAll("#container > #black-notes > piano-keyboard-note");
+let b5 = p5.querySelectorAll("#container > #black-notes > piano-keyboard-note");
+let b6 = p6.querySelectorAll("#container > #black-notes > piano-keyboard-note");
+let b7 = p7.querySelectorAll("#container > #black-notes > piano-keyboard-note");
+// console.log(b) // only idx 1,2,4,5,6 avail for black notes
+
+let C1 = w1[0];
+let CS1 = b1[1];
+let D1 = w1[1];
+let DS1 = b1[2];
+let E1 = w1[2];
+let F1 = w1[3];
+let FS1 = b1[4];
+let G1 = w1[4];
+let GS1 = b1[5];
+let A1 = w1[5];
+let AS1 = b1[6];
+let B1 = w1[6];
+
+let C2 = w2[0];
+let CS2 = b2[1];
+let D2 = w2[1];
+let DS2 = b2[2];
+let E2 = w2[2];
+let F2 = w2[3];
+let FS2 = b2[4];
+let G2 = w2[4];
+let GS2 = b2[5];
+let A2 = w2[5];
+let AS2 = b2[6];
+let B2 = w2[6];
+
+let C3 = w3[0];
+let CS3 = b3[1];
+let D3 = w3[1];
+let DS3 = b3[2];
+let E3 = w3[2];
+let F3 = w3[3];
+let FS3 = b3[4];
+let G3 = w3[4];
+let GS3 = b3[5];
+let A3 = w3[5];
+let AS3 = b3[6];
+let B3 = w3[6];
+
+let C4 = w4[0];
+let CS4 = b4[1];
+let D4 = w4[1];
+let DS4 = b4[2];
+let E4 = w4[2];
+let F4 = w4[3];
+let FS4 = b4[4];
+let G4 = w4[4];
+let GS4 = b4[5];
+let A4 = w4[5];
+let AS4 = b4[6];
+let B4 = w4[6];
+
+let C5 = w5[0];
+let CS5 = b5[1];
+let D5 = w5[1];
+let DS5 = b5[2];
+let E5 = w5[2];
+let F5 = w5[3];
+let FS5 = b5[4];
+let G5 = w5[4];
+let GS5 = b5[5];
+let A5 = w5[5];
+let AS5 = b5[6];
+let B5 = w5[6];
+
+let C6 = w6[0];
+let CS6 = b6[1];
+let D6 = w6[1];
+let DS6 = b6[2];
+let E6 = w6[2];
+let F6 = w6[3];
+let FS6 = b6[4];
+let G6 = w6[4];
+let GS6 = b6[5];
+let A6 = w6[5];
+let AS6 = b6[6];
+let B6 = w6[6];
+
+let C7 = w7[0];
+let CS7 = b7[1];
+let D7 = w7[1];
+let DS7 = b7[2];
+let E7 = w7[2];
+let F7 = w7[3];
+let FS7 = b7[4];
+let G7 = w7[4];
+let GS7 = b7[5];
+let A7 = w7[5];
+let AS7 = b7[6];
+let B7 = w7[6];
+
+const badKeys = ["Audio", "Alt", "Launch", "Enter", "Meta", "Play", "Tab"];
+let on = false;
+let pressedKey;
+let index = 0;
+let frequencies = [];
+
+function down(e) {
+    if (on && !badKeys.some(badKey => e.key.includes(badKey)) && !e.repeat
+            && (e.key != pressedKey) && (index < frequencies.length)) {
+        oscillator.frequency.value = frequencies[index];
+        index++; pressedKey = e.key;
+    }
+}
+
+function up(e) {
+    if (on && (e.key === pressedKey)) {
+        oscillator.frequency.value = 0; pressedKey = null;
+    }
+}
+document.addEventListener("keydown", down);
+document.addEventListener("keyup", up);
+
