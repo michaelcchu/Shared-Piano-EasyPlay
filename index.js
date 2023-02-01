@@ -83,11 +83,14 @@ function down(e) {
     if (on && !badKeys.some(badKey => strPress.includes(badKey))
         && (index < notes.length) && !e.repeat && (press != activePress)
         && (document.activeElement.nodeName !== 'INPUT')) {
-        console.log(DOM_note[notes[index]].clicked);
-        if (activePress === null) {
-            DOM_note[notes[index]].clicked = true;
-        } else {
-            DOM_note[notes[index]].clicked = true;
+        if (DOM_note[notes[index]]) {
+            console.log(DOM_note[notes[index]].clicked);
+            if (activePress === null) {
+                DOM_note[notes[index]].clicked = true;
+            } else {
+                DOM_note[notes[index-1]].clicked = false;
+                DOM_note[notes[index]].clicked = true;
+            }
         }
         activePress = press; index++;
     }
@@ -96,7 +99,9 @@ function down(e) {
 function up(e) {
     if (on && (press === activePress)) {
         activePress = null;
-        DOM_note[notes[index-1]].clicked = false;
+        if (DOM_note[notes[index-1]]) {
+            DOM_note[notes[index-1]].clicked = false;
+        }
     }
 }
 
