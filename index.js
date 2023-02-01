@@ -10,6 +10,11 @@
 // @require      https://unpkg.com/@tonejs/midi
 // ==/UserScript==
 
+// Set some settings
+var setting = document.querySelector('piano-settings');
+setting.resizeMode = "manual";
+setting.octaves = 7;
+
 // Get notes from Shared Piano keyboard
 const keyboard = document.querySelector("piano-keyboard");
 const octaves = keyboard.shadowRoot.querySelectorAll("piano-keyboard-octave");
