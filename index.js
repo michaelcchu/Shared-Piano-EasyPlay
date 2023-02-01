@@ -53,13 +53,13 @@ const value = {"c":0,"d":2,"e":4,"f":5,"g":7,"a":9,"b":11,"#":1,"&":-1};
 let on = false;
 
 // What to do when starting the program
-function start() { 
-    resetVars(); convertNotesToFrequencies();
-    if (!on) {oscillator.start(); on = true;}
+function start() {
+    resetVars();
+    if (!on) {on = true;}
 }
 
 function resetVars() {
-    activePress = null; frequencies = []; index = 0; 
+    activePress = null; index = 0; 
     track = 0;
     notes = midi.tracks[track].notes.map(x => x.midi);
 }
@@ -83,10 +83,11 @@ function down(e) {
     if (on && !badKeys.some(badKey => strPress.includes(badKey))
         && (index < notes.length) && !e.repeat && (press != activePress)
         && (document.activeElement.nodeName !== 'INPUT')) {
+        console.log(DOM_note[notes[index]].clicked);
         if (activePress === null) {
-            DOM_note[notes[i]].click();
+            DOM_note[notes[index]].clicked = true;
         } else {
-            DOM_note[notes[i]].click();
+            DOM_note[notes[index]].clicked = true;
         }
         activePress = press; index++;
     }
@@ -94,8 +95,8 @@ function down(e) {
 
 function up(e) {
     if (on && (press === activePress)) {
-        gainNode.gain.setTargetAtTime(0, audioContext.currentTime, 0.015);
         activePress = null;
+        DOM_note[notes[index-1]].clicked = false;
     }
 }
 
