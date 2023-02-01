@@ -11,25 +11,9 @@
 // ==/UserScript==
 
 // Set some settings
-var setting = document.querySelector('piano-settings');
+const setting = document.querySelector('piano-settings');
 setting.resizeMode = "manual";
 setting.octaves = 7;
-
-// Get notes from Shared Piano keyboard
-const keyboard = document.querySelector("piano-keyboard");
-const octaves = keyboard.shadowRoot.querySelectorAll("piano-keyboard-octave");
-const DOM_note = {};
-
-for (let i = 0; i < octaves.length; i++) {
-    const notes = octaves[i].shadowRoot.querySelectorAll("piano-keyboard-note");
-    for (let j = 0; j < notes.length; j++) {
-        if (notes[j].note) {
-            DOM_note[notes[j].note] = notes[j];
-        }
-    }
-}
-
-console.log(DOM_note);
 
 // Create reader
 const reader = new FileReader();
@@ -56,11 +40,28 @@ let activePress; let index; let notes; let normalGain;
 let octave; let press; let track; let tuning;
 const value = {"c":0,"d":2,"e":4,"f":5,"g":7,"a":9,"b":11,"#":1,"&":-1};
 let on = false;
+let DOM_note;
 
 // What to do when starting the program
 function start() {
     resetVars();
     if (!on) {on = true;}
+
+    // Get notes from Shared Piano keyboard
+    const keyboard = document.querySelector("piano-keyboard");
+    const octaves = keyboard.shadowRoot.querySelectorAll("piano-keyboard-octave");
+    DOM_note = {};
+
+    for (let i = 0; i < octaves.length; i++) {
+        const notes = octaves[i].shadowRoot.querySelectorAll("piano-keyboard-note");
+        for (let j = 0; j < notes.length; j++) {
+            if (notes[j].note) {
+                DOM_note[notes[j].note] = notes[j];
+            }
+        }
+    }
+
+    console.log(DOM_note);
 }
 
 function resetVars() {
